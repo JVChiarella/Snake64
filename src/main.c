@@ -461,9 +461,9 @@ int main(void)
             //graphics_draw_sprite(disp, 82, 160, ness); //sprite sheet
             //graphics_draw_sprite_trans_stride( disp, 50, 100, ness, ((animcounter / 8) & 0x7) * 2 );
             if(animDirection == 0){
-                graphics_draw_sprite_trans_stride( disp, animX, animY, ness, ((animcounter / 15) & 1) ? 4: 5 );
+                graphics_draw_sprite_trans_stride( disp, animX, animY, ness, ((animcounter / 5) & 1) ? 4: 5 );
             } else {
-                graphics_draw_sprite_trans_stride( disp, animX, animY, ness, ((animcounter / 15) & 1) ? 12: 13 );
+                graphics_draw_sprite_trans_stride( disp, animX, animY, ness, ((animcounter / 5) & 1) ? 12: 13 );
             }
 
             //draw text
@@ -474,8 +474,8 @@ int main(void)
 
             char msg2[100];
             graphics_set_color(graphics_make_color(0xff, 0xa5, 0x00, 0xff), 0);
-            snprintf(msg2, sizeof(msg2), "%s", "by DANK");
-            graphics_draw_text(disp, 125, 30, msg2);
+            snprintf(msg2, sizeof(msg2), "%s", "by Jason C.");
+            graphics_draw_text(disp, 110, 30, msg2);
 
             char msg3[100];
             graphics_set_color(graphics_make_color(0xff, 0xa5, 0x00, 0xff), 0);
@@ -539,13 +539,22 @@ int main(void)
                 if((snakeLength / 5 +1) > high_score){
                     high_score = (snakeLength / 5) + 1;
                 }
-                char msg[100];
-                snprintf(msg, sizeof(msg), "%s", "PRESS START TO TRY AGAIN");
-                graphics_draw_text(disp, 60, 10, msg);
 
                 char msgScore[100];
-                snprintf(msgScore, sizeof(msgScore), "%s %i", "HIGH SCORE:", high_score);
-                graphics_draw_text(disp, 100, 100, msgScore);
+                snprintf(msgScore, sizeof(msgScore), "%s %i", "YOUR SCORE:", (snakeLength / 5) + 1);
+                graphics_draw_text(disp, 100, 20, msgScore);
+
+                char msgHighScore[100];
+                snprintf(msgHighScore, sizeof(msgHighScore), "%s %i", "HIGH SCORE:", high_score);
+                graphics_draw_text(disp, 100, 70, msgHighScore);
+
+                char msg[100];
+                snprintf(msg, sizeof(msg), "%s", "PRESS START TO TRY AGAIN");
+                graphics_draw_text(disp, 60, 160, msg);
+
+                char msg2[100];
+                snprintf(msg2, sizeof(msg2), "%s", "PRESS Z TO RETURN TO MAIN MENU");
+                graphics_draw_text(disp, 40, 210, msg2);
             }
 
             //update display
@@ -599,6 +608,18 @@ int main(void)
                     reset_snake(&snakeLeftBot, &snakeLeftTop, &snakeRightBot, &snakeRightTop,
                                 &snakeLength, snakeHead);
                     spawn_food(&foodLeftBot, &foodLeftTop, &foodRightBot, &foodRightTop, &foodX, &foodY, true);
+                } else if(controller_data.c[0].Z){
+                    //clear snake array
+                    for(int i=0; i < snakeLength; i++){
+                        snake[i].x = -5;
+                        snake[i].y = -5;
+                    }
+                    reset_snake(&snakeLeftBot, &snakeLeftTop, &snakeRightBot, &snakeRightTop,
+                                &snakeLength, snakeHead);
+                    spawn_food(&foodLeftBot, &foodLeftTop, &foodRightBot, &foodRightTop, &foodX, &foodY, true);
+
+                    //return to main menu
+                    game_state = 0;
                 }
             }
             
