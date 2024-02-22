@@ -433,10 +433,13 @@ int main(void)
 
     //open audio files
     //makefile will convert wav audio files in the asset folder to wav64 into the filesystem folder automatically
-    char *titles[3];
+    char *titles[6];
     titles[0] = "rom:/01_Frown_Town_Theme.wav64";
     titles[1] = "rom:/02_Frown_Town_Overworld.wav64";
-    titles[2] = "rom:/09_The_Return_Home.wav64";
+    titles[2] = "rom:/04_Attack!.wav64";
+    titles[3] = "rom:/06_Sailing_To_Your_Personal_Legend.wav64";
+    titles[4] = "rom:/09_The_Return_Home.wav64";
+    titles[5] = "rom:/10_Congratulations.wav64";
     int curSongIndex = 0;
 
     wav64_t song, laser;
@@ -509,7 +512,7 @@ int main(void)
             //change song to prior from queue
             if(controller_data.c[0].L){
                 if(curSongIndex == 0){
-                    curSongIndex = 2;
+                    curSongIndex = 5;
                 } else {
                     curSongIndex--;
                 }
@@ -518,7 +521,7 @@ int main(void)
                 wav64_play(&song, CHANNEL_MUSIC);
             //change song to next in queue
             } else if(controller_data.c[0].R){
-                if(curSongIndex == 2){
+                if(curSongIndex == 5){
                     curSongIndex = 0;
                 } else {
                     curSongIndex++;
@@ -628,7 +631,7 @@ int main(void)
             //change song to prior from queue
             if(controller_data.c[0].L){
                 if(curSongIndex == 0){
-                    curSongIndex = 2;
+                    curSongIndex = 5;
                 } else {
                     curSongIndex--;
                 }
@@ -637,7 +640,7 @@ int main(void)
                 wav64_play(&song, CHANNEL_MUSIC);
             //change song to next in queue
             } else if(controller_data.c[0].R){
-                if(curSongIndex == 2){
+                if(curSongIndex == 5){
                     curSongIndex = 0;
                 } else {
                     curSongIndex++;
