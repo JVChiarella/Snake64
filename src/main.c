@@ -34,12 +34,6 @@ void rdpq_draw_one_rectangle(int *x, int *y, int *w, int *h, color_t color){
     //set rdp to primitive mode
     rdpq_set_mode_fill(color);
 
-    //check that rdp is ready for new commands - done automatically now?
-    //rdpq_sync(SYNC_PIPE);
-
-    //this function can be used to change the color after being init by set_mode_fill
-    //rdpq_set_fill_color(color);
-
     //draw rectangle
     rdpq_fill_rectangle(*x, *y, *x + *w, *y + *h);
 }
@@ -439,10 +433,16 @@ int main(void)
 
     //open audio files
     //makefile will convert wav audio files in the asset folder to wav64 into the filesystem folder automatically
-    wav64_t theme, laser;
-    wav64_open(&theme, "rom:/theme.wav64");
-    wav64_set_loop(&theme, true);
-    wav64_play(&theme, CHANNEL_MUSIC);
+    char *titles[3];
+    titles[0] = "rom:/01_Frown_Town_Theme.wav64";
+    titles[1] = "rom:/02_Frown_Town_Overworld.wav64";
+    titles[2] = "rom:/09_The_Return_Home.wav64";
+    int curSongIndex = 0;
+
+    wav64_t song, laser;
+    wav64_open(&song, titles[0]);
+    wav64_set_loop(&song, true);
+    wav64_play(&song, CHANNEL_MUSIC);
     wav64_open(&laser, "rom:/laser.wav64");
 
     //GAME LOOP 
@@ -485,7 +485,12 @@ int main(void)
             char msg4[100];
             graphics_set_color(graphics_make_color(0xff, 0xa5, 0x00, 0xff), 0);
             snprintf(msg4, sizeof(msg4), "%s", "MUSIC by SHANE PERRY");
-            graphics_draw_text(disp, 77, 220, msg4);
+            graphics_draw_text(disp, 77, 200, msg4);
+
+            char msg5[100];
+            graphics_set_color(graphics_make_color(0xff, 0xa5, 0x00, 0xff), 0);
+            snprintf(msg5, sizeof(msg5), "%s", "CHANGE SONGS WITH L/R");
+            graphics_draw_text(disp, 73, 220, msg5);
 
             //update display
             display_show(disp);
@@ -496,9 +501,31 @@ int main(void)
             controller_scan();
             controller_data = get_keys_down();
 
-            //unpause
+            //start new game
             if(controller_data.c[0].start){
                 game_state = 1;
+            }
+
+            //change song to prior from queue
+            if(controller_data.c[0].L){
+                if(curSongIndex == 0){
+                    curSongIndex = 2;
+                } else {
+                    curSongIndex--;
+                }
+                wav64_open(&song, titles[curSongIndex]);
+                wav64_set_loop(&song, true);
+                wav64_play(&song, CHANNEL_MUSIC);
+            //change song to next in queue
+            } else if(controller_data.c[0].R){
+                if(curSongIndex == 2){
+                    curSongIndex = 0;
+                } else {
+                    curSongIndex++;
+                }
+                wav64_open(&song, titles[curSongIndex]);
+                wav64_set_loop(&song, true);
+                wav64_play(&song, CHANNEL_MUSIC);
             }
 
             // Check whether one audio buffer is ready, otherwise wait for next
@@ -597,6 +624,29 @@ int main(void)
                 snakeHead->direction = 0;
                 game_state = 2;
             }
+
+            //change song to prior from queue
+            if(controller_data.c[0].L){
+                if(curSongIndex == 0){
+                    curSongIndex = 2;
+                } else {
+                    curSongIndex--;
+                }
+                wav64_open(&song, titles[curSongIndex]);
+                wav64_set_loop(&song, true);
+                wav64_play(&song, CHANNEL_MUSIC);
+            //change song to next in queue
+            } else if(controller_data.c[0].R){
+                if(curSongIndex == 2){
+                    curSongIndex = 0;
+                } else {
+                    curSongIndex++;
+                }
+                wav64_open(&song, titles[curSongIndex]);
+                wav64_set_loop(&song, true);
+                wav64_play(&song, CHANNEL_MUSIC);
+            }
+
             //reset
             if(snakeHead->direction == -1){
                 if(controller_data.c[0].start){
